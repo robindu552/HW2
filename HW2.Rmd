@@ -55,7 +55,7 @@ Once combined, you will need to do the following:
 
 ## 1: After merging the data, make sure you don’t have any duplicates by counting the number of rows. Make sure it matches.
 
-```{r}
+```{r question1}
 nrow(chs)
 nrow(individual)
 ```
@@ -64,7 +64,7 @@ nrow(individual)
 
 ## 2. Create a new categorical variable named “obesity_level” using the BMI measurement (underweight BMI<14; normal BMI 14-22; overweight BMI 22-24; obese BMI>24). To make sure the variable is rightly coded, create a summary table that contains the minimum BMI, maximum BMI, and the total number of observations per category.
 
-```{r}
+```{r question2}
 chs[, obesity_level := cut(chs$bmi,
                            breaks=c(-Inf,14,22,24,Inf),
                            labels=c("underweight","normal","overweight","obese"))]
@@ -81,7 +81,50 @@ filter(!is.na(obesity_level))
 
 ## 3. Create another categorical variable named “smoke_gas_exposure” that summarizes “Second Hand Smoke” and “Gas Stove.” The variable should have four categories in total.
 
-```{r}
+```{r question3}
+chs$smoke_gas_exposure[chs$smoke==0 & chs$gasstove==0] <- "no exposure"
+chs$smoke_gas_exposure[chs$smoke==0 & chs$gasstove==1] <- "gas exposure only"
+chs$smoke_gas_exposure[chs$smoke==1 & chs$gasstove==0] <- "smoke exposure only"
+chs$smoke_gas_exposure[chs$smoke==1 & chs$gasstove==1] <- "both smoke and gas exposure"
 
+head(chs)
+```
+
+
+
+## 4. Create four summary tables showing the average (or proportion, if binary) and sd of “Forced expiratory volume in 1 second (ml)” and asthma indicator by town, sex, obesity level, and “smoke_gas_exposure.”
+
+```{r question4}
+# By Town
+chs %>% group_by(townname) %>%
+  summarise(
+    fev_avg = mean(fev, na.rm = TRUE),
+    fev_sd = sd(fev, na.rm = TRUE),
+    asthma_prop = sum(asthma, na.rm = TRUE)/length(asthma)
+  )
+
+# By Sex
+chs %>% group_by(male) %>%
+  summarise(
+    fev_avg = mean(fev, na.rm = TRUE),
+    fev_sd = sd(fev, na.rm = TRUE),
+    asthma_prop = sum(asthma, na.rm = TRUE)/length(asthma)
+  )
+
+# By Obesity Level
+chs %>% group_by(obesity_level) %>%
+  summarise(
+    fev_avg = mean(fev, na.rm = TRUE),
+    fev_sd = sd(fev, na.rm = TRUE),
+    asthma_prop = sum(asthma, na.rm = TRUE)/length(asthma)
+  )
+
+# By Smoke_gas_exposure
+chs %>% group_by(smoke_gas_exposure) %>%
+  summarise(
+    fev_avg = mean(fev, na.rm = TRUE),
+    fev_sd = sd(fev, na.rm = TRUE),
+    asthma_prop = sum(asthma, na.rm = TRUE)/length(asthma)
+  )
 ```
 
