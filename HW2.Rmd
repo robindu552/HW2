@@ -260,13 +260,30 @@ ggplot(mapping = aes(x = smoke_gas_exposure, y = fev)) +
 ## 5. A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
 
 ```{r}
+library(leaflet)
 
+pm2.5_pal<-colorNumeric(c("blue","purple","red"), domain=chs$pm25_mass)
+
+leaflet(chs) %>%
+  addProviderTiles("OpenStreetMap") %>%
+  addCircles(lat=~lat, lng=~lon, color=~pm2.5_pal(pm25_mass),opacity=1,fillOpacity=1,radius=100) %>%
+  addLegend("bottomleft", pal=pm2.5_pal, values=chs$pm25_mass, title="Concentrations of PM2.5 in CHS Communities", opacity=1)
 ```
+
+- The closer to Los Angeles, the more red the point is, indicating that PM2.5 concentrations are higher in communities closer to the city
 
 
 ## 6. Choose a visualization to examine whether PM2.5 mass is associated with FEV.
 
 ```{r}
+chs %>% 
+  filter(!(pm25_mass %in% NA)) %>%
+ggplot(mapping = aes(x = pm25_mass, y = fev)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', formula = y~x) +
+  labs(title = "FEV vs PM2.5 Concentration")
 
+cor.test(chs$pm25_mass, chs$fev)
 ```
 
+- There is a slight but statistically significant negative association between FEV and PM2.5 concentration (Pearson correlation coefficient = -0.0734, p < 0.05)
