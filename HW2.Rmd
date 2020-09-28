@@ -17,6 +17,7 @@ You will need to download two datasets from https://github.com/USCbiostats/data-
 
 ```{r setup}
 library(data.table)
+library(dplyr)
 individual <- fread("C:/PM566/HW2/chs_individual.csv")
 regional <- fread("C:/PM566/HW2/chs_regional.csv")
 
@@ -62,6 +63,23 @@ nrow(individual)
 
 
 ## 2. Create a new categorical variable named “obesity_level” using the BMI measurement (underweight BMI<14; normal BMI 14-22; overweight BMI 22-24; obese BMI>24). To make sure the variable is rightly coded, create a summary table that contains the minimum BMI, maximum BMI, and the total number of observations per category.
+
+```{r}
+chs[, obesity_level := cut(chs$bmi,
+                           breaks=c(-Inf,14,22,24,Inf),
+                           labels=c("underweight","normal","overweight","obese"))]
+
+chs %>% group_by(obesity_level) %>%
+summarise(
+          min_bmi = min(bmi, na.rm = TRUE),
+          max_bmi = max(bmi, na.rm = TRUE),
+          count = n()
+          ) %>%
+filter(!is.na(obesity_level))
+```
+
+
+## 3. Create another categorical variable named “smoke_gas_exposure” that summarizes “Second Hand Smoke” and “Gas Stove.” The variable should have four categories in total.
 
 ```{r}
 
