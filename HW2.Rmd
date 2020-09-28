@@ -159,5 +159,85 @@ The primary questions of interest are:
 
 Follow the EDA checklist from week 3 and the previous assignment. Be sure to focus on the key variables. Create the following figures and interpret them. Be sure to include easily understandable axes, titles, and legends.
 
+```{r eda-setup}
+# Check the dataset
+dim(chs)
+head(chs)
+tail(chs)
+str(chs)
 
+# Examine the main variables of interest
+summary(chs$bmi)
+summary(chs$fev)
+summary(chs$pm25_mass)
+table(chs$smoke_gas_exposure)
+```
+- The missing data were accounted for by imputing (see Data Wrangling section). The summary of the main variables seems reasonable.
+
+
+## 1. Facet plot showing scatterplots with regression lines of BMI vs FEV by “townname”.
+
+```{r}
+library(ggplot2)
+chs %>%
+  filter(!(townname %in% NA)) %>%
+ggplot(mapping = aes(x = fev, y = bmi)) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y~x) + 
+  facet_wrap(~townname) +
+  labs(title = "Regression of BMI vs FEV by Town")
+```
+
+- It appears that there is a positive association between BMI and FEV for every town
+
+
+## 2. Stacked histograms of FEV by BMI category and FEV by smoke/gas exposure. Use different color schemes than the ggplot default.
+
+```{r}
+# By BMI category
+chs %>%
+  filter(!(obesity_level %in% NA)) %>%
+ggplot(mapping = aes(x = fev, fill = obesity_level)) +
+  geom_histogram(binwidth = 30) +
+  labs(title = "FEv by BMI Category") +
+  scale_fill_brewer(palette = "Set1")
+
+# By Smoke/gas exposure
+chs %>%
+  filter(!(smoke_gas_exposure %in% NA)) %>%
+ggplot(mapping = aes(x = fev, fill = smoke_gas_exposure)) +
+  geom_histogram(binwidth = 30) +
+  labs(title = "FEv by Smoke/Gas Exposure") +
+  scale_fill_brewer(palette = "Set1")
+```
+
+- The histograms show that people in the higher BMI categories tend to have higher FEV, while smoke/gas exposure does not seem to have an association with FEV
+
+
+## 3. Barchart of BMI by smoke/gas exposure.
+
+```{r}
+
+```
+
+
+## 4. Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category.
+
+```{r}
+
+```
+
+
+## 5. A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
+
+```{r}
+
+```
+
+
+## 6. Choose a visualization to examine whether PM2.5 mass is associated with FEV.
+
+```{r}
+
+```
 
