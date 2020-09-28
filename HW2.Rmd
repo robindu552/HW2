@@ -50,7 +50,28 @@ chs[1:5,]
 - There are 1200 rows (same as the individual dataset) and 49 columns in the merged dataset
 
 
-Once combined, you will need to do the following:
+```{r imputing}
+# Impute missing data using the average within the variables "male" and "hispanic"
+chs[, bmi_mean := mean(bmi, na.rm = TRUE), by = .(male, hispanic)]
+chs[, bmi := ifelse(is.na(bmi), bmi_mean, bmi)]
+
+chs[, smoke_mean := mean(smoke, na.rm = TRUE), by = .(male, hispanic)]
+chs[, smoke := ifelse(is.na(smoke), smoke_mean, smoke)]
+
+chs[, gasstove_mean := mean(gasstove, na.rm = TRUE), by = .(male, hispanic)]
+chs[, gasstove := ifelse(is.na(gasstove), gasstove_mean, gasstove)]
+
+chs[, fev_mean := mean(fev, na.rm = TRUE), by = .(male, hispanic)]
+chs[, fev := ifelse(is.na(fev), fev_mean, fev)]
+
+chs[, asthma_mean := mean(asthma, na.rm = TRUE), by = .(male, hispanic)]
+chs[, asthma := ifelse(is.na(asthma), asthma_mean, asthma)]
+```
+
+
+Once combined, you will need to do the following.
+
+In the case of missing values, impute data using the average within the variables “male” and “hispanic.” If you are interested (and feel adventurous) in the theme of Data Imputation, take a look at this paper on “Multiple Imputation” using the Amelia R package here.
 
 
 ## 1: After merging the data, make sure you don’t have any duplicates by counting the number of rows. Make sure it matches.
@@ -127,4 +148,16 @@ chs %>% group_by(smoke_gas_exposure) %>%
     asthma_prop = sum(asthma, na.rm = TRUE)/length(asthma)
   )
 ```
+
+
+# Looking at the Data (EDA)
+
+The primary questions of interest are:
+1. What is the association between BMI and FEV (forced expiratory volume)?
+2. What is the association between smoke and gas exposure and FEV?
+3. What is the association between PM2.5 exposure and FEV?
+
+Follow the EDA checklist from week 3 and the previous assignment. Be sure to focus on the key variables. Create the following figures and interpret them. Be sure to include easily understandable axes, titles, and legends.
+
+
 
