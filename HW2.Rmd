@@ -202,7 +202,7 @@ ggplot(mapping = aes(x = fev, fill = obesity_level)) +
   labs(title = "FEv by BMI Category") +
   scale_fill_brewer(palette = "Set1")
 
-# By Smoke/gas exposure
+# By Smoke/gas exposure category
 chs %>%
   filter(!(smoke_gas_exposure %in% NA)) %>%
 ggplot(mapping = aes(x = fev, fill = smoke_gas_exposure)) +
@@ -217,15 +217,44 @@ ggplot(mapping = aes(x = fev, fill = smoke_gas_exposure)) +
 ## 3. Barchart of BMI by smoke/gas exposure.
 
 ```{r}
-
+chs %>%
+  filter(!(obesity_level %in% NA)) %>%
+  filter(!(smoke_gas_exposure %in% NA)) %>%
+ggplot(mapping = aes(x = obesity_level, fill = smoke_gas_exposure)) +
+  geom_bar() +
+  labs(title = "BMI by Smoke/Gas Exposure") +
+  scale_fill_brewer(palette = "Set1")
 ```
+
+- There appears to be a fairly proportional spread of smoke/gas exposure among the BMI categories, indicating that there is little/no association between smoke/gas exposure and BMI category
 
 
 ## 4. Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category.
 
 ```{r}
+# By BMI category
+chs %>%
+  filter(!(obesity_level %in% NA)) %>%
+ggplot(mapping = aes(x = obesity_level, y = fev)) +
+  stat_summary(
+       fun.min = min,
+       fun.max = max,
+       fun= median) +
+    labs(title = "Statistical Summary Graphs of FEV by BMI Category")
 
+# By Smoke/gas exposure category
+chs %>%
+  filter(!(smoke_gas_exposure %in% NA)) %>%
+ggplot(mapping = aes(x = smoke_gas_exposure, y = fev)) +
+  stat_summary(
+       fun.min = min,
+       fun.max = max,
+       fun= median) +
+    labs(title = "Statistical Summary Graphs of FEV by Smoke/Gas Exposure Category")
 ```
+
+
+- It appears that FEV increased with BMI category, but not with smoke/gas exposure category (or very little)
 
 
 ## 5. A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
